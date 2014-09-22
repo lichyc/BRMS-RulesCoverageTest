@@ -1,0 +1,35 @@
+//created on: Sep 16, 2014
+package com.acme.test.a
+
+//list any import classes here.
+import com.acme.brms.domain.AcmeFactA;
+
+
+//declare any global variables here
+
+
+
+
+rule "Your First Rule"
+
+    when
+        //conditions
+        fact : AcmeFactA (name == null)
+    then
+        //actions
+        System.out.println("Name is unset :-( ");
+        fact.setName("Unknown");
+        
+       
+
+end
+
+rule "Your Second Rule"
+    //include attributes such as "salience" here...
+    when
+        //conditions
+        fact : AcmeFactA (name != null)
+    then
+        //actions
+		System.out.println("Hurra, the name is set to" + fact.getName());
+end

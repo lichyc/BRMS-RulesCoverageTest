@@ -1,0 +1,66 @@
+//created on: Sep 16, 2014
+package com.acme.test.d
+
+//list any import classes here.
+import com.acme.brms.domain.AcmeFactA;
+
+
+//declare any global variables here
+
+
+
+
+rule "Your First Rule"
+
+    when
+        //conditions
+        fact : AcmeFactA (name == null)
+    then
+        //actions
+        System.out.println("Name is unset :-( ");
+        
+end
+
+rule "Your Second Rule"
+    //include attributes such as "salience" here...
+    when
+        //conditions
+        fact : AcmeFactA (name == null && something == null)
+    then
+        //actions
+		System.out.println("Name and Something are unset :-( ");
+        
+end
+
+rule "Your Third Rule"
+    //include attributes such as "salience" here...
+    when
+        //conditions
+        fact : AcmeFactA (something == null)
+    then
+        //actions
+		System.out.println("Something is unset :-( ");
+        
+end
+
+rule "Your 4th Rule"
+    //include attributes such as "salience" here...
+    when
+        //conditions
+        fact : AcmeFactA (counter == 0)
+    then
+        //actions
+		System.out.println("Counter is Zero :-( ");
+        
+end
+
+rule "Your 5th Rule"
+    //include attributes such as "salience" here...
+    when
+        //conditions
+        fact : AcmeFactA (name == null || something == null)
+    then
+        //actions
+		System.out.println("Name or Something  unset :-( ");
+        
+end
