@@ -35,11 +35,12 @@ import org.drools.builder.KnowledgeBuilder;
 import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.builder.ResourceType;
 import org.drools.core.io.impl.UrlResource;
-import org.drools.event.rule.AgendaEventListener;
 import org.drools.io.Resource;
 import org.drools.io.ResourceFactory;
-import org.drools.runtime.StatefulKnowledgeSession;
-import org.drools.runtime.StatelessKnowledgeSession;
+import org.kie.api.KieBase;
+import org.kie.api.event.rule.AgendaEventListener;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.StatelessKieSession;
 import org.kie.internal.agent.KnowledgeAgent;
 import org.kie.internal.agent.KnowledgeAgentFactory;
 
@@ -63,7 +64,7 @@ public abstract class AbstractJBossBRMSEngineManagerCore {
 
 	private static Logger logger = Logger.getLogger(AbstractJBossBRMSEngineManagerCore.class);
 
-	private KnowledgeBase kbase = null;
+	private KieBase kbase = null;
 
 	private static FilenameFilter xlsFilenameFilter = new FilenameFilter() {
 		
@@ -95,6 +96,7 @@ public abstract class AbstractJBossBRMSEngineManagerCore {
 		}
 	};
 	
+	@Deprecated
 	protected final static KnowledgeBase createKnowledgeBaseFromRepo(String repoUrlString) {
 		 // Initialize the Knowledge Session.
         KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
@@ -108,6 +110,7 @@ public abstract class AbstractJBossBRMSEngineManagerCore {
 		
 	}
 	
+	@Deprecated
 	protected final static KnowledgeBase createKnowledgeBaseFromRepoWithChangeListener(String repoUrlString) {
 	KnowledgeAgent kagent = KnowledgeAgentFactory.newKnowledgeAgent( "MyAgent" );
 	
@@ -125,7 +128,7 @@ public abstract class AbstractJBossBRMSEngineManagerCore {
 	return null;
 	}
     
-
+	@Deprecated
 	protected final static KnowledgeBase createKnowledgeBaseFromFiles(String rulePath) {
 		logger.info("Creating knowledge-base out dir " + rulePath);
 		DecisionTableConfiguration dtConf = KnowledgeBuilderFactory.newDecisionTableConfiguration();
@@ -203,22 +206,22 @@ public abstract class AbstractJBossBRMSEngineManagerCore {
 		return fileNameList;
 	}
 
-	public KnowledgeBase getKnowledgeBase() {
+	public KieBase getKnowledgeBase() {
 		return kbase;
 	}
 
-	public void setKnowledgeBase(KnowledgeBase knowledgeBase) {
+	public void setKnowledgeBase(KieBase knowledgeBase) {
 		kbase = knowledgeBase;
 	}
 
-	protected void attachAgendaEventListeners(final StatefulKnowledgeSession ksession) {
+	protected void attachAgendaEventListeners(final KieSession ksession) {
 		List<AgendaEventListener> listeners = AgendaEventListenerFactory.getAgendaEventListeners();
 		for (AgendaEventListener nextListener : listeners) {
 			ksession.addEventListener(nextListener);
 		}
 	}
 
-	protected void attachAgendaEventListeners(final StatelessKnowledgeSession ksession) {
+	protected void attachAgendaEventListeners(final StatelessKieSession ksession) {
 		List<AgendaEventListener> listeners = AgendaEventListenerFactory.getAgendaEventListeners();
 		for (AgendaEventListener nextListener : listeners) {
 			ksession.addEventListener(nextListener);

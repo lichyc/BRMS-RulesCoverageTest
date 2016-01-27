@@ -30,9 +30,9 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import org.apache.log4j.Logger;
-import org.drools.KnowledgeBase;
-import org.drools.definition.KnowledgePackage;
-import org.drools.definition.rule.Rule;
+import org.kie.api.KieBase;
+import org.kie.api.definition.KiePackage;
+import org.kie.api.definition.rule.Rule;
 
 public class RulesComparer {
 	
@@ -48,9 +48,9 @@ public class RulesComparer {
 	/*
 	 * This method dumps all the rules in a log file
 	 */
-	public static void dumpRule(KnowledgeBase kbase) {
+	public static void dumpRule(KieBase kbase) {
 
-		Iterator<KnowledgePackage> temp = kbase.getKnowledgePackages().iterator();
+		Iterator<KiePackage> temp = kbase.getKiePackages().iterator();
 		//System.out.println("Before Parsing");
 		while (temp.hasNext()) {
 			Collection<Rule> ruleCollection = temp.next().getRules();

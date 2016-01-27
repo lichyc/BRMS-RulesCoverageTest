@@ -25,9 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.drools.event.rule.AgendaEventListener;
-import org.drools.runtime.StatefulKnowledgeSession;
-import org.drools.runtime.StatelessKnowledgeSession;
+//import org.drools.event.rule.AgendaEventListener;
+//import org.drools.runtime.StatefulKnowledgeSession;
+//import org.drools.runtime.StatelessKnowledgeSession;
+
+import org.kie.api.event.rule.AgendaEventListener;
 
 import com.redhat.gps.util.properties.PropertiesManager;
 

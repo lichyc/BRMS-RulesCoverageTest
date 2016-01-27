@@ -22,10 +22,10 @@
 package com.redhat.gps.brms.event;
 
 import org.apache.log4j.Logger;
-import org.drools.definition.rule.Rule;
-import org.drools.event.rule.AgendaEventListener;
-import org.drools.event.rule.BeforeActivationFiredEvent;
-import org.drools.event.rule.DefaultAgendaEventListener;
+import org.kie.api.definition.rule.Rule;
+import org.kie.api.event.rule.BeforeMatchFiredEvent;
+import org.kie.api.event.rule.DefaultAgendaEventListener;
+
 
 /**
  * {@link AgendaEventListener} implementation which logs which rules are activated.
@@ -38,9 +38,9 @@ public class RuleActivationLoggerAgendaEventListener extends DefaultAgendaEventL
 	public static final Logger LOGGER = Logger.getLogger(RuleActivationLoggerAgendaEventListener.class);
 
 	@Override
-	public void beforeActivationFired(BeforeActivationFiredEvent event) {
+	public void beforeMatchFired(BeforeMatchFiredEvent event) {
 		if (LOGGER.isDebugEnabled()) {
-			Rule rule = event.getActivation().getRule();
+			Rule rule = event.getMatch().getRule();
 			LOGGER.debug(rule.getPackageName() + "." + rule.getName() + " : " + event.getClass().getSimpleName());
 		}
 	}

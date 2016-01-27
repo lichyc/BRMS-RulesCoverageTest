@@ -37,13 +37,15 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.drools.KnowledgeBase;
-import org.drools.definition.KnowledgePackage;
-import org.drools.definition.rule.Rule;
+
 import org.junit.AfterClass;
 import org.junit.Test;
+import org.kie.api.KieBase;
+import org.kie.api.KieServices;
+import org.kie.api.definition.KiePackage;
+import org.kie.api.definition.rule.Rule;
+import org.kie.api.runtime.KieContainer;
 
-import com.acme.brms.engine.GenericJBossBRMSEngineManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.redhat.gps.brms.event.RuleActivationLoggerAgendaEventListener;
@@ -131,7 +133,7 @@ public class CoverageTest {
 		
 		String rulePath = PropertiesManager.getInstance().getProperty(ruleSetName);
 		
-		Map<String, List<String>> allRulesMap = getAllRulesList(createKnowledgeBase(rulePath));
+		Map<String, List<String>> allRulesMap = getAllRulesList(createKnowledgeBase(ruleSetName));
 		assertNotNull(allRulesMap);
 
 		List<String> firedRulesList = getFiredRulesList(allRulesMap.get("packages"));
@@ -249,13 +251,13 @@ public class CoverageTest {
 	 *            knowledge base.
 	 * @return Extracted rules.
 	 */
-	private Map<String, List<String>> getAllRulesList(KnowledgeBase kbase) {
+	private Map<String, List<String>> getAllRulesList(KieBase kbase) {
 
 		List<String> rulesList = new ArrayList<String>();
 		List<String> rulesPackageList = new ArrayList<String>();
 
-		for (KnowledgePackage knowledgePackage : kbase.getKnowledgePackages()) {
-			for (Rule rule : knowledgePackage.getRules()) {
+		for (KiePackage kiePackage : kbase.getKiePackages()) {
+			for (Rule rule : kiePackage.getRules()) {
 				rulesList.add(rule.getPackageName() + "." + rule.getName());
 				rulesPackageList.add(rule.getPackageName());
 			}
@@ -275,13 +277,19 @@ public class CoverageTest {
 	 *            absolute directory path of the files to read.
 	 * @return KnowledgeBase, containing the rules loaded.
 	 */
-	private KnowledgeBase createKnowledgeBase(String rulePath) {
-		GenericJBossBRMSEngineManager engineManager = new GenericJBossBRMSEngineManager(rulePath);
+	private KieBase createKnowledgeBase(String kieBaseName) {
 		
-		KnowledgeBase kbase = engineManager.getKnowledgeBase();
+		KieServices kieServices = KieServices.Factory.get();
+		KieContainer kieContainer = kieServices.getKieClasspathContainer();
+		KieBase kieBase = kieContainer.getKieBase(kieBaseName);
+		
+		
+//		GenericJBossBRMSEngineManager engineManager = new GenericJBossBRMSEngineManager(rulePath);
+//		
+//		KnowledgeBase kbase = engineManager.getKnowledgeBase();
 		// dump rules
-		RulesComparer.dumpRule(kbase);
-		return kbase;
+		RulesComparer.dumpRule(kieBase);
+		return kieBase;
 		
 	}
 }

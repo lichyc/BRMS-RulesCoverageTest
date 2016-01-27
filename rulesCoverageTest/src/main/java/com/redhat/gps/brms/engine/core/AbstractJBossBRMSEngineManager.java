@@ -27,12 +27,23 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.drools.KnowledgeBase;
-import org.drools.command.Command;
-import org.drools.command.CommandFactory;
-import org.drools.runtime.StatefulKnowledgeSession;
-import org.drools.runtime.StatelessKnowledgeSession;
-import org.drools.runtime.rule.FactHandle;
+//import org.drools.KnowledgeBase;
+//import org.drools.command.Command;
+//import org.drools.command.CommandFactory;
+//import org.drools.runtime.StatefulKnowledgeSession;
+//import org.drools.runtime.StatelessKnowledgeSession;
+//import org.drools.runtime.rule.FactHandle;
+
+import org.kie.api.KieBase;
+import org.kie.api.KieServices;
+import org.kie.api.command.Command;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.StatelessKieSession;
+import org.kie.api.runtime.rule.FactHandle;
+import org.kie.internal.command.CommandFactory;
+import org.kie.internal.runtime.StatefulKnowledgeSession;
+import org.kie.internal.runtime.StatelessKnowledgeSession;
 
 import com.redhat.gps.brms.engine.core.AbstractJBossBRMSEngineManagerCore;
 import com.redhat.gps.util.properties.PropertiesManager;
@@ -56,34 +67,42 @@ public abstract class AbstractJBossBRMSEngineManager extends AbstractJBossBRMSEn
 	
 	private static boolean REUSE_KSESSION = false;
 	
-	private ThreadLocal<StatefulKnowledgeSession> statefulKnowledgeSession = new ThreadLocal<StatefulKnowledgeSession>() {
-        protected synchronized StatefulKnowledgeSession initialValue() {        	
-        	StatefulKnowledgeSession statefulKnowledgeSession = getKnowledgeBase().newStatefulKnowledgeSession();
+	private ThreadLocal<KieSession> statefulKnowledgeSession = new ThreadLocal<KieSession>() {
+        protected synchronized KieSession initialValue() {        	
+        	KieSession statefulKnowledgeSession = getKnowledgeBase().newKieSession();
         	attachAgendaEventListeners(statefulKnowledgeSession);
         	
             return statefulKnowledgeSession;
         }
     };
+    
+    public AbstractJBossBRMSEngineManager(String kieBaseName) {
+    	
+    	KieServices kieServices = KieServices.Factory.get();
+		KieContainer kieContainer = kieServices.getKieClasspathContainer();
+		setKnowledgeBase(kieContainer.getKieBase(kieBaseName));
+    	
+    }
 
-	public AbstractJBossBRMSEngineManager(String rulePath) {
-		
-			rootPath =PropertiesManager.getInstance().getProperty("rules.home");
-			
-			if(rulePath.startsWith("http")) {
-				if (rulePath.endsWith("ChangeSet.xml")) {
-					setKnowledgeBase(createKnowledgeBaseFromRepoWithChangeListener(rulePath));
-				} else {
-					setKnowledgeBase(createKnowledgeBaseFromRepo(rulePath));
-				}
-			} else {
-				setKnowledgeBase(createKnowledgeBaseFromFiles(rootPath + rulePath));
-			}
-
-	}
+//	public AbstractJBossBRMSEngineManager(String rulePath) {
+//		
+//			rootPath =PropertiesManager.getInstance().getProperty("rules.home");
+//			
+//			if(rulePath.startsWith("http")) {
+//				if (rulePath.endsWith("ChangeSet.xml")) {
+//					setKnowledgeBase(createKnowledgeBaseFromRepoWithChangeListener(rulePath));
+//				} else {
+//					setKnowledgeBase(createKnowledgeBaseFromRepo(rulePath));
+//				}
+//			} else {
+//				setKnowledgeBase(createKnowledgeBaseFromFiles(rootPath + rulePath));
+//			}
+//
+//	}
 
 	protected final void executeRulesOnObjectArray(Object[] obj) throws Exception {
 		if(REUSE_KSESSION) {
-			StatefulKnowledgeSession ksession = getStatefulKnowledgeSession();
+			KieSession ksession = getStatefulKnowledgeSession();
 			for (Object nextObject : obj) {
 				ksession.insert(nextObject);
 			}
@@ -94,7 +113,7 @@ public abstract class AbstractJBossBRMSEngineManager extends AbstractJBossBRMSEn
 				ksession.retract(factHandle);
 			}
 		} else {
-			StatelessKnowledgeSession ksession = getKnowledgeBase().newStatelessKnowledgeSession();
+			StatelessKieSession ksession = getKnowledgeBase().newStatelessKieSession();
 			attachAgendaEventListeners(ksession);
 			List<Command> commands = new ArrayList<Command>();
 			for (Object nextObject : obj) {
@@ -106,7 +125,7 @@ public abstract class AbstractJBossBRMSEngineManager extends AbstractJBossBRMSEn
 	
 	protected final void executeRulesOnObject(Object obj) throws Exception {
 		if(REUSE_KSESSION) {
-			StatefulKnowledgeSession ksession = getStatefulKnowledgeSession();
+			KieSession ksession = getStatefulKnowledgeSession();
 			ksession.insert(obj);
 			ksession.fireAllRules();
 			Iterator<FactHandle> factHandleIterator = ksession.getFactHandles().iterator();
@@ -115,20 +134,20 @@ public abstract class AbstractJBossBRMSEngineManager extends AbstractJBossBRMSEn
 				ksession.retract(factHandle);
 			}
 		} else {
-			StatelessKnowledgeSession ksession = getKnowledgeBase().newStatelessKnowledgeSession();
+			StatelessKieSession ksession = getKnowledgeBase().newStatelessKieSession();
 			attachAgendaEventListeners(ksession);
 			ksession.execute(obj);
 		}
 	}
 	
 	protected final void executeRuleFlow(String ruleFlowName, Map<String, Object> parameterMap) throws Exception {
-		StatefulKnowledgeSession ksession = getStatefulKnowledgeSession();
+		KieSession ksession = getStatefulKnowledgeSession();
 		attachAgendaEventListeners(ksession);
 		ksession.startProcess(ruleFlowName, parameterMap);
         ksession.fireAllRules();
 	}
 	
-	private StatefulKnowledgeSession getStatefulKnowledgeSession() {
+	private KieSession getStatefulKnowledgeSession() {
 		
         return statefulKnowledgeSession.get();
     }

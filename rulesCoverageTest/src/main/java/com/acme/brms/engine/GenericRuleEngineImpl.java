@@ -58,14 +58,14 @@ public class GenericRuleEngineImpl implements GenericRuleEngine {
 		if (kbaseMap.containsKey(ruleSetName)) {
 			return kbaseMap.get(ruleSetName);
 		} else {
-			String ruleBase = PropertiesManager.getInstance("com.acme.brms").getProperty(ruleSetName);
-			if(ruleBase != null && !ruleBase.isEmpty()) {
-				GenericJBossBRMSEngineManager nextManager = new GenericJBossBRMSEngineManager(ruleBase);
+//			String ruleBase = PropertiesManager.getInstance("com.acme.brms").getProperty(ruleSetName);
+//			if(ruleBase != null && !ruleBase.isEmpty()) {
+				GenericJBossBRMSEngineManager nextManager = new GenericJBossBRMSEngineManager(ruleSetName);
 				kbaseMap.put(ruleSetName, nextManager);
 				return nextManager;
-			} else {
-				throw new Exception(String.format("No rule base location found for name: %s.", ruleSetName));
-			}
+//			} else {
+//				throw new Exception(String.format("No rule base location found for name: %s.", ruleSetName));
+//			}
 			
 			
 		}

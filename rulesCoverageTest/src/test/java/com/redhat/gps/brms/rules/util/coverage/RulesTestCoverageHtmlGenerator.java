@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +35,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.redhat.gps.brms.event.RuleActivationLoggerAgendaEventListener;
 import com.redhat.gps.util.properties.PropertiesManager;
 
 import freemarker.cache.ClassTemplateLoader;

@@ -35,8 +35,8 @@ import com.redhat.gps.brms.engine.core.AbstractJBossBRMSEngineManager;
 public class GenericJBossBRMSEngineManager extends
 		AbstractJBossBRMSEngineManager {
 
-	public GenericJBossBRMSEngineManager(String rulePath) {
-		super(rulePath);
+	public GenericJBossBRMSEngineManager(String kieBaseName) {
+		super(kieBaseName);
 	}
 	
 	SimpleFact executeRulesOnWorkpackage(SimpleFact facts) throws Exception {

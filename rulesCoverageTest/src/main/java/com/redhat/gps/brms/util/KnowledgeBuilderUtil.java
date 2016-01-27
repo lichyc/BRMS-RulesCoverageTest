@@ -33,6 +33,7 @@ import org.drools.io.Resource;
  * 
  * @author <a href="mailto:duncan.doyle@redhat.com">Duncan Doyle</a>
  */
+@Deprecated
 public class KnowledgeBuilderUtil {
 
 	/**
